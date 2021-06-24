@@ -55,6 +55,7 @@ import com.sun.tools.javac.tree.JCTree.JCTypeParameter;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -1224,8 +1225,17 @@ public final class TreeUtils {
       return false;
     }
 
-    if ((((@NonNull Symbol) e).flags() & Flags.RECORD) != 0) {
-      return true;
+    try {
+      Field recordField = Flags.class.getDeclaredField("RECORD");
+      long Flags_RECORD = recordField.getLong(null);
+
+      if ((((@NonNull Symbol) e).flags() & Flags_RECORD) != 0) {
+        return true;
+      }
+    } catch (IllegalAccessException ex) {
+      throw new RuntimeException(ex);
+    } catch (NoSuchFieldException ex) {
+      // We are on an older JDK, in which case it can't be a record constructor
     }
 
     return false;
@@ -1245,11 +1255,19 @@ public final class TreeUtils {
     if (!(e instanceof Symbol)) {
       return false;
     }
+    try {
+      Field recordField = Flags.class.getDeclaredField("GENERATED_MEMBER");
+      long Flags_GENERATED_MEMBER = recordField.getLong(null);
 
-    // Generated constructors seem to get GENERATEDCONSTR even though the documentation
-    // seems to imply they would get GENERATED_MEMBER like the fields do:
-    if ((((@NonNull Symbol) e).flags() & (Flags.GENERATED_MEMBER | Flags.GENERATEDCONSTR)) != 0) {
-      return true;
+      // Generated constructors seem to get GENERATEDCONSTR even though the documentation
+      // seems to imply they would get GENERATED_MEMBER like the fields do:
+      if ((((@NonNull Symbol) e).flags() & (Flags_GENERATED_MEMBER | Flags.GENERATEDCONSTR)) != 0) {
+        return true;
+      }
+    } catch (IllegalAccessException ex) {
+      throw new RuntimeException(ex);
+    } catch (NoSuchFieldException ex) {
+      // We are on an older JDK, in which case it can't be a record constructor
     }
 
     return false;
