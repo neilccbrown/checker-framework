@@ -1227,6 +1227,7 @@ public final class TreeUtils {
 
     try {
       Field recordField = Flags.class.getDeclaredField("RECORD");
+      @SuppressWarnings("nullness") // getLong accepts null for static fields
       long Flags_RECORD = recordField.getLong(null);
 
       if ((((@NonNull Symbol) e).flags() & Flags_RECORD) != 0) {
@@ -1257,6 +1258,7 @@ public final class TreeUtils {
     }
     try {
       Field recordField = Flags.class.getDeclaredField("GENERATED_MEMBER");
+      @SuppressWarnings("nullness") // getLong accepts null for static fields
       long Flags_GENERATED_MEMBER = recordField.getLong(null);
 
       // Generated constructors seem to get GENERATEDCONSTR even though the documentation
