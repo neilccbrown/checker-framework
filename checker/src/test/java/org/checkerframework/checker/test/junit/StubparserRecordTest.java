@@ -1,6 +1,8 @@
 package org.checkerframework.checker.test.junit;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized;
@@ -16,8 +18,11 @@ public class StubparserRecordTest extends CheckerFrameworkPerDirectoryTest {
   public StubparserRecordTest(List<File> testFiles) {
     super(
         testFiles,
-        org.checkerframework.checker.nullness.NullnessChecker.class,
+        Arrays.asList(
+            org.checkerframework.checker.nullness.NullnessChecker.class.getName(),
+            org.checkerframework.checker.lock.LockChecker.class.getName()),
         "stubparser-records",
+        Collections.emptyList(),
         "-Anomsgtext",
         "-Astubs=tests/stubparser-records",
         "-AstubWarnIfNotFound");
