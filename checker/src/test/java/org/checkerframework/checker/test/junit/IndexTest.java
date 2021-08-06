@@ -19,6 +19,9 @@ public class IndexTest extends CheckerFrameworkPerDirectoryTest {
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"index", "all-systems"};
+    // Check for JDK 16+ without using a library:
+    if (System.getProperty("java.version").matches("^(1[6-9]|[2-9][0-9])\\..*"))
+      return new String[] {"index", "index-records", "all-systems"};
+    else return new String[] {"index", "all-systems"};
   }
 }
